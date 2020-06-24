@@ -13,9 +13,9 @@ namespace PiWeb.Api.Training.Example
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using Zeiss.IMT.PiWeb.Api.Common.Data;
-	using Zeiss.IMT.PiWeb.Api.DataService.Rest;
-	using Attribute = Zeiss.IMT.PiWeb.Api.DataService.Rest.Attribute;
+	using Zeiss.PiWeb.Api.Definitions;
+	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
 	using AttributeList = System.Collections.Generic.Dictionary<string, object>;
 
 	public static class ExampleExport
@@ -82,19 +82,19 @@ namespace PiWeb.Api.Training.Example
 			//2. Check the server configuration
 			foreach( var entry in attributeMapping )
 			{
-				Configuration.CheckAttribute( client, Entity.Characteristic, entry.Value, entry.Key, AttributeType.Float );
+				Configuration.CheckAttribute( client, EntityDto.Characteristic, entry.Value, entry.Key, AttributeTypeDto.Float );
 			}
 
 			//2.1 Make sure the essential time and value attributes are present
-			Configuration.CheckAttribute( client, Entity.Measurement, WellKnownKeys.Measurement.Time, "Time",
-				AttributeType.DateTime );
-			Configuration.CheckAttribute( client, Entity.Value, WellKnownKeys.Value.MeasuredValue, "Value", AttributeType.Float );
+			Configuration.CheckAttribute( client, EntityDto.Measurement, WellKnownKeys.Measurement.Time, "Time",
+				AttributeTypeDto.DateTime );
+			Configuration.CheckAttribute( client, EntityDto.Value, WellKnownKeys.Value.MeasuredValue, "Value", AttributeTypeDto.Float );
 
 			//3. Check the inspection plan
 
 			//3.1 Check the inspection plan part
 			var part = InspectionPlan.GetOrCreatePart( client, inspectionName );
-			var characteristicMapping = new Dictionary<Characteristic, InspectionPlanCharacteristic>();
+			var characteristicMapping = new Dictionary<Characteristic, InspectionPlanCharacteristicDto>();
 
 			//3.2 Check the inspection plan characteristics
 			foreach( var characteristic in data )
@@ -105,22 +105,22 @@ namespace PiWeb.Api.Training.Example
 			}
 
 			//4. Create the measurement
-			var dataCharacteristics = characteristicMapping.Select( pair => new DataCharacteristic
+			var dataCharacteristics = characteristicMapping.Select( pair => new DataCharacteristicDto
 			{
 				Uuid = pair.Value.Uuid,
 				Path = pair.Value.Path,
-				Value = new DataValue
+				Value = new DataValueDto
 				{
-					Attributes = new[] { new Attribute( 1, pair.Key.Value ) }
+					Attributes = new[] { new AttributeDto( 1, pair.Key.Value ) }
 				}
 			} ).ToArray();
 
-			var measurement = new DataMeasurement
+			var measurement = new DataMeasurementDto
 			{
 				Uuid = Guid.NewGuid(),
 				PartUuid = part.Uuid,
 				Time = DateTime.UtcNow,
-				Attributes = new[] { new Attribute( WellKnownKeys.Measurement.Time, DateTime.UtcNow ) },
+				Attributes = new[] { new AttributeDto( WellKnownKeys.Measurement.Time, DateTime.UtcNow ) },
 				Characteristics = dataCharacteristics
 			};
 

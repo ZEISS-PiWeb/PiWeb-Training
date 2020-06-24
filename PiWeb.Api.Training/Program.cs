@@ -13,8 +13,8 @@ namespace PiWeb.Api.Training
 	#region usings
 	
 	using PiWeb.Api.Training.Lessons;
-	using Zeiss.IMT.PiWeb.Api.DataService.Rest;
-	using Zeiss.IMT.PiWeb.Api.RawDataService.Rest;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.RawData;
 	using Configuration = PiWeb.Api.Training.Lessons.Configuration;
 	using RawData = PiWeb.Api.Training.Lessons.RawData;
 	using ServiceInformation = PiWeb.Api.Training.Lessons.ServiceInformation;

@@ -15,34 +15,36 @@ namespace PiWeb.Api.Training.Lessons
 	using System;
 	using System.Threading.Tasks;
 	using System.Xml;
-	using Zeiss.IMT.PiWeb.Api.Common.Data;
-	using Zeiss.IMT.PiWeb.Api.DataService.Rest;
+	using Zeiss.PiWeb.Api.Definitions;
+	using Zeiss.PiWeb.Api.Rest.Dtos;
+	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
 
 	#endregion
 
 	public static class Measurements
 	{
-		private static readonly AbstractAttributeDefinition ValueAttributeDefinition = new AttributeDefinition( WellKnownKeys.Value.MeasuredValue, "Value", AttributeType.Float, 0 );
-		private static readonly AbstractAttributeDefinition MeasurementAttributeDefinition = new AttributeDefinition( WellKnownKeys.Measurement.Time, "Time", AttributeType.DateTime, 0 );
+		private static readonly AbstractAttributeDefinitionDto ValueAttributeDefinition = new AttributeDefinitionDto( WellKnownKeys.Value.MeasuredValue, "Value", AttributeTypeDto.Float, 0 );
+		private static readonly AbstractAttributeDefinitionDto MeasurementAttributeDefinition = new AttributeDefinitionDto( WellKnownKeys.Measurement.Time, "Time", AttributeTypeDto.DateTime, 0 );
 
-		private static readonly InspectionPlanPart Part = new InspectionPlanPart { Path = PathHelper.RoundtripString2PathInformation( "P:/Measured part/" ), Uuid = Guid.NewGuid() };
-		private static readonly InspectionPlanCharacteristic Characteristic = new InspectionPlanCharacteristic { Path = PathHelper.RoundtripString2PathInformation( "PC:/Measured part/Measured characteristic/" ), Uuid = Guid.NewGuid() };
+		private static readonly InspectionPlanPartDto Part = new InspectionPlanPartDto { Path = PathHelper.RoundtripString2PathInformation( "P:/Measured part/" ), Uuid = Guid.NewGuid() };
+		private static readonly InspectionPlanCharacteristicDto Characteristic = new InspectionPlanCharacteristicDto { Path = PathHelper.RoundtripString2PathInformation( "PC:/Measured part/Measured characteristic/" ), Uuid = Guid.NewGuid() };
 
-		private static readonly DataCharacteristic Value = new DataCharacteristic
+		private static readonly DataCharacteristicDto Value = new DataCharacteristicDto
 		{
 			//Always specify both, path and uuid of the characteristic. All other properties are obsolete
 			Path = Characteristic.Path,
 			Uuid = Characteristic.Uuid,
-			Value = new DataValue( 0.0 )
+			Value = new DataValueDto( 0.0 )
 		};
 
-		private static readonly DataMeasurement Measurement = new DataMeasurement
+		private static readonly DataMeasurementDto Measurement = new DataMeasurementDto
 		{
 			Uuid = Guid.NewGuid(),
 			PartUuid = Part.Uuid,
 			Attributes = new[]
 				{
-					new Zeiss.IMT.PiWeb.Api.DataService.Rest.Attribute( MeasurementAttributeDefinition.Key, DateTime.Now )
+					new AttributeDto( MeasurementAttributeDefinition.Key, DateTime.Now )
 				},
 			Characteristics = new[]
 				{
@@ -58,11 +60,11 @@ namespace PiWeb.Api.Training.Lessons
 
 			var configuration = await client.GetConfiguration();
 
-			if( configuration.GetDefinition( Entity.Measurement, MeasurementAttributeDefinition.Key ) == null )
-				await client.CreateAttributeDefinition( Entity.Measurement, MeasurementAttributeDefinition );
+			if( configuration.GetDefinition( EntityDto.Measurement, MeasurementAttributeDefinition.Key ) == null )
+				await client.CreateAttributeDefinition( EntityDto.Measurement, MeasurementAttributeDefinition );
 
-			if( configuration.GetDefinition( Entity.Value, ValueAttributeDefinition.Key ) == null )
-				await client.CreateAttributeDefinition( Entity.Value, ValueAttributeDefinition );
+			if( configuration.GetDefinition( EntityDto.Value, ValueAttributeDefinition.Key ) == null )
+				await client.CreateAttributeDefinition( EntityDto.Value, ValueAttributeDefinition );
 
 			//Every measurement is attached to a part, and every value is attached to a characteristic
 			await client.CreateParts( new[] { Part } );
@@ -71,25 +73,25 @@ namespace PiWeb.Api.Training.Lessons
 			//The function 'CreateMeasurements' will create measurements without any values. You'll much more likely use the 'CreateMeasurementValues' function
 			await client.CreateMeasurementValues( new[] { Measurement } );
 
-			Value.Value = new DataValue( 0.0 ) //This will result in an unmeasured characteristic, because the attribute array doesn't contain K1
+			Value.Value = new DataValueDto( 0.0 ) //This will result in an unmeasured characteristic, because the attribute array doesn't contain K1
 			{
-				Attributes = new Zeiss.IMT.PiWeb.Api.DataService.Rest.Attribute[] { }
+				Attributes = new AttributeDto[] { }
 			};
 
 			await client.UpdateMeasurementValues( new[] { Measurement } );
 
-			Value.Value = new DataValue //this will work!
+			Value.Value = new DataValueDto //this will work!
 			{
-				Attributes = new[] { new Zeiss.IMT.PiWeb.Api.DataService.Rest.Attribute( ValueAttributeDefinition.Key, 0.5 ) }
+				Attributes = new[] { new AttributeDto( ValueAttributeDefinition.Key, 0.5 ) }
 			};
 
 			await client.UpdateMeasurementValues( new[] { Measurement } );
 
 			var result = await client.GetMeasurementValues(
-				PathInformation.Root,                                              // Part where to search measurements 
-				new MeasurementValueFilterAttributes
+				PathInformationDto.Root,                                           // Part where to search measurements 
+				new MeasurementValueFilterAttributesDto
 				{
-					AggregationMeasurements = AggregationMeasurementSelection.All, // Decide how to include aggregated measurements in your query
+					AggregationMeasurements = AggregationMeasurementSelectionDto.All, // Decide how to include aggregated measurements in your query
 					CharacteristicsUuidList = null,                                // Use characteristic uuids to fetch single measurement values
 					Deep = true,                                                   // A deep search will find measurements recursively below the start path
 					FromModificationDate = null,                                   // Will only search measurements with a modification date (LastModified) newer than the specified one
@@ -98,14 +100,14 @@ namespace PiWeb.Api.Training.Lessons
 					MeasurementUuids = null,                                       // Use measurement uuids to search for specific measurements
 					OrderBy = new[]                                                // Order the returned measurements by specific attributes
 					{
-						new Order( WellKnownKeys.Measurement.Time, OrderDirection.Asc, Entity.Measurement )
+						new OrderDto( WellKnownKeys.Measurement.Time, OrderDirectionDto.Asc, EntityDto.Measurement )
 					},
 					RequestedMeasurementAttributes = null,                         // Specify, which measurement attributes should be returned (default: all)
 					RequestedValueAttributes = null,                               // Specify, which value attributes should be returned (default: all)
-					SearchCondition = new GenericSearchAttributeCondition          // You can create more complex attribute conditions using the GenericSearchAnd, GenericSearchOr and GenericSearchNot class
+					SearchCondition = new GenericSearchAttributeConditionDto       // You can create more complex attribute conditions using the GenericSearchAnd, GenericSearchOr and GenericSearchNot class
 					{
 						Attribute = WellKnownKeys.Measurement.Time,                //Only measurement attributes are supported
-						Operation = Operation.GreaterThan,
+						Operation = OperationDto.GreaterThan,
 						Value = XmlConvert.ToString( DateTime.UtcNow - TimeSpan.FromDays( 2 ), XmlDateTimeSerializationMode.Utc )
 					}
 				} );
@@ -122,8 +124,8 @@ namespace PiWeb.Api.Training.Lessons
 			await client.DeleteCharacteristics( new[] { Characteristic.Uuid } );
 			await client.DeleteParts( new[] { Part.Uuid } );
 
-			await client.DeleteAttributeDefinitions( Entity.Measurement, new[] { MeasurementAttributeDefinition.Key } );
-			await client.DeleteAttributeDefinitions( Entity.Value, new[] { ValueAttributeDefinition.Key } );
+			await client.DeleteAttributeDefinitions( EntityDto.Measurement, new[] { MeasurementAttributeDefinition.Key } );
+			await client.DeleteAttributeDefinitions( EntityDto.Value, new[] { ValueAttributeDefinition.Key } );
 
 		}
 

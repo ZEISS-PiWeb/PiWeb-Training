@@ -11,21 +11,22 @@
 namespace PiWeb.Api.Training.Example
 {
 	using System;
-	using Zeiss.IMT.PiWeb.Api.DataService.Rest;
+	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
 
 	public static class Configuration
 	{
 		#region methods
 
-		public static void CheckAttribute( DataServiceRestClient client, Entity entity, ushort key, string description,
-			AttributeType type )
+		public static void CheckAttribute( DataServiceRestClient client, EntityDto entity, ushort key, string description,
+			AttributeTypeDto type )
 		{
 			var configuration = client.GetConfiguration().Result;
 			var definition = configuration.GetDefinition( key );
 
 			if( definition == null )
 			{
-				client.CreateAttributeDefinition( entity, new AttributeDefinition
+				client.CreateAttributeDefinition( entity, new AttributeDefinitionDto
 				{
 					Key = key,
 					Description = description,
@@ -33,12 +34,12 @@ namespace PiWeb.Api.Training.Example
 				} );
 			}
 			else if( configuration.GetTypeForKey( key ) != entity || definition.Description != description ||
-			         ( definition as AttributeDefinition )?.Type != type )
+			         ( definition as AttributeDefinitionDto )?.Type != type )
 			{
 				//Don't do this, in case the PiWeb database is already in use. Changing the configuration will cause data-loss!!!
-				client.UpdateAttributeDefinitions( entity, new AbstractAttributeDefinition[]
+				client.UpdateAttributeDefinitions( entity, new AbstractAttributeDefinitionDto[]
 				{
-					new AttributeDefinition
+					new AttributeDefinitionDto
 					{
 						Key = key,
 						Description = description,
@@ -48,7 +49,7 @@ namespace PiWeb.Api.Training.Example
 			}
 		}
 
-		public static void CheckCatalogAttribute( DataServiceRestClient client, Entity entity, ushort key, string description,
+		public static void CheckCatalogAttribute( DataServiceRestClient client, EntityDto entity, ushort key, string description,
 			Guid catalog )
 		{
 			var configuration = client.GetConfiguration().Result;
@@ -56,7 +57,7 @@ namespace PiWeb.Api.Training.Example
 
 			if( definition == null )
 			{
-				client.CreateAttributeDefinition( entity, new CatalogAttributeDefinition
+				client.CreateAttributeDefinition( entity, new CatalogAttributeDefinitionDto
 				{
 					Key = key,
 					Description = description,
@@ -64,11 +65,11 @@ namespace PiWeb.Api.Training.Example
 				} );
 			}
 			else if( configuration.GetTypeForKey( key ) != entity || definition.Description != description ||
-			         ( definition as CatalogAttributeDefinition )?.Catalog != catalog )
+			         ( definition as CatalogAttributeDefinitionDto )?.Catalog != catalog )
 			{
-				client.UpdateAttributeDefinitions( entity, new AbstractAttributeDefinition[]
+				client.UpdateAttributeDefinitions( entity, new AbstractAttributeDefinitionDto[]
 				{
-					new CatalogAttributeDefinition
+					new CatalogAttributeDefinitionDto
 					{
 						Key = key,
 						Description = description,

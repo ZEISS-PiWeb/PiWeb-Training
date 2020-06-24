@@ -13,21 +13,21 @@ namespace PiWeb.Api.Training.Example
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using Zeiss.IMT.PiWeb.Api.Common.Data;
-	using Zeiss.IMT.PiWeb.Api.DataService.Rest;
-	using Attribute = Zeiss.IMT.PiWeb.Api.DataService.Rest.Attribute;
+	using Zeiss.PiWeb.Api.Rest.Dtos;
+	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
 
 	public static class InspectionPlan
 	{
 		#region methods
 
-		public static InspectionPlanPart GetOrCreatePart( DataServiceRestClient client, string name )
+		public static InspectionPlanPartDto GetOrCreatePart( DataServiceRestClient client, string name )
 		{
-			var parts = client.GetParts( PathInformation.Root, null, 1 ).Result;
+			var parts = client.GetParts( PathInformationDto.Root, null, 1 ).Result;
 			var existingPart = parts.FirstOrDefault( p => string.Equals( p.Path.Name, name ) );
 			if( existingPart == null )
 			{
-				existingPart = new InspectionPlanPart
+				existingPart = new InspectionPlanPartDto
 				{
 					Path = PathHelper.String2PartPathInformation( name ),
 					Uuid = Guid.NewGuid()
@@ -42,15 +42,15 @@ namespace PiWeb.Api.Training.Example
 			return existingPart;
 		}
 
-		public static InspectionPlanCharacteristic GetOrCreateCharacteristic( DataServiceRestClient client, string partName, string characteristicName, Dictionary<string, ushort> mapping, Dictionary<string, object> values )
+		public static InspectionPlanCharacteristicDto GetOrCreateCharacteristic( DataServiceRestClient client, string partName, string characteristicName, Dictionary<string, ushort> mapping, Dictionary<string, object> values )
 		{
 			var characteristics = client.GetCharacteristics( PathHelper.String2PartPathInformation( partName ), 1 ).Result;
-			var attributes = values.Select( pair => new Attribute( mapping[ pair.Key ], pair.Value ) ).ToArray();
+			var attributes = values.Select( pair => new AttributeDto( mapping[ pair.Key ], pair.Value ) ).ToArray();
 
 			var existingCharacteristic = characteristics.FirstOrDefault( p => string.Equals( p.Path.Name, characteristicName ) );
 			if( existingCharacteristic == null )
 			{
-				existingCharacteristic = new InspectionPlanCharacteristic
+				existingCharacteristic = new InspectionPlanCharacteristicDto
 				{
 					Path = PathHelper.RoundtripString2PathInformation( "PC:/" + partName + " / " + characteristicName+ "/" ),
 					Uuid = Guid.NewGuid(),

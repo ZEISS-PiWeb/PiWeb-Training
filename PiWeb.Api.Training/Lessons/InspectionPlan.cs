@@ -15,8 +15,9 @@ namespace PiWeb.Api.Training.Lessons
 	using System;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using Zeiss.IMT.PiWeb.Api.Common.Data;
-	using Zeiss.IMT.PiWeb.Api.DataService.Rest;
+	using Zeiss.PiWeb.Api.Rest.Dtos;
+	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
 
 	#endregion
 
@@ -26,12 +27,12 @@ namespace PiWeb.Api.Training.Lessons
 
 		//The path structure consists of capital 'P' and 'C' characters, one for each path element. 'P' masks a part, while 'C' masks a characteristic. 
 
-		private static readonly InspectionPlanPart Part = new InspectionPlanPart { Path = PathHelper.RoundtripString2PathInformation( "P:/PartName/" ), Uuid = Guid.NewGuid() };
-		private static readonly InspectionPlanPart SubPart = new InspectionPlanPart { Path = PathHelper.RoundtripString2PathInformation( "PP:/PartName/SubPart/" ), Uuid = Guid.NewGuid() };
-		private static readonly InspectionPlanCharacteristic SubChild = new InspectionPlanCharacteristic { Path = PathHelper.RoundtripString2PathInformation( "PPC:/PartName/SubPart/Child/" ), Uuid = Guid.NewGuid() };
+		private static readonly InspectionPlanPartDto Part = new InspectionPlanPartDto { Path = PathHelper.RoundtripString2PathInformation( "P:/PartName/" ), Uuid = Guid.NewGuid() };
+		private static readonly InspectionPlanPartDto SubPart = new InspectionPlanPartDto { Path = PathHelper.RoundtripString2PathInformation( "PP:/PartName/SubPart/" ), Uuid = Guid.NewGuid() };
+		private static readonly InspectionPlanCharacteristicDto SubChild = new InspectionPlanCharacteristicDto { Path = PathHelper.RoundtripString2PathInformation( "PPC:/PartName/SubPart/Child/" ), Uuid = Guid.NewGuid() };
 
-		private static readonly InspectionPlanCharacteristic Characteristic = new InspectionPlanCharacteristic { Path = PathHelper.RoundtripString2PathInformation( "PC:/PartName/CharName/"), Uuid = Guid.NewGuid() };
-		private static readonly InspectionPlanCharacteristic Child = new InspectionPlanCharacteristic { Path = PathHelper.RoundtripString2PathInformation( "PCC:/PartName/CharName/Child/" ), Uuid = Guid.NewGuid() };
+		private static readonly InspectionPlanCharacteristicDto Characteristic = new InspectionPlanCharacteristicDto { Path = PathHelper.RoundtripString2PathInformation( "PC:/PartName/CharName/" ), Uuid = Guid.NewGuid() };
+		private static readonly InspectionPlanCharacteristicDto Child = new InspectionPlanCharacteristicDto { Path = PathHelper.RoundtripString2PathInformation( "PCC:/PartName/CharName/Child/" ), Uuid = Guid.NewGuid() };
 
 		#endregion
 
@@ -39,13 +40,12 @@ namespace PiWeb.Api.Training.Lessons
 
 		public static async Task Lesson( DataServiceRestClient client )
 		{
-
 			await client.CreateParts( new[] { Part, SubPart } );
 			await client.CreateCharacteristics( new[] { Characteristic, Child, SubChild } );
 
 			//Depth null will result in a recursive search
 			var result = await client.GetCharacteristics( Part.Path, null );
-			Console.WriteLine($"Depth null: {result.Count()} characteristics");
+			Console.WriteLine( $"Depth null: {result.Count()} characteristics" );
 
 			//Depth 0 will return an empty list
 			result = await client.GetCharacteristics( Part.Path, 0 );
@@ -58,10 +58,10 @@ namespace PiWeb.Api.Training.Lessons
 			//Depth 2 will return the direct children and their children, but not the children of subparts
 			result = await client.GetCharacteristics( Part.Path, 2 );
 			Console.WriteLine( $"Depth 2: {result.Count()} characteristics" );
-			
+
 			//Use UpdateParts and UpdateCharacteristics to rename entities, and modify their attributes
 			Part.Path = PathHelper.RoundtripString2PathInformation( "P:/PartName2/" );
-			await client.UpdateParts( new[] { Part }  );
+			await client.UpdateParts( new[] { Part } );
 		}
 
 		public static async Task UndoLesson( DataServiceRestClient client )

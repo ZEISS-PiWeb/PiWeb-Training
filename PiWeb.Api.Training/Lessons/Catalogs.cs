@@ -15,8 +15,8 @@ namespace PiWeb.Api.Training.Lessons
 	using System;
 	using System.Threading.Tasks;
 	using PiWeb.Api.Training.Helpers;
-	using Zeiss.IMT.PiWeb.Api.DataService.Rest;
-	using Attribute = Zeiss.IMT.PiWeb.Api.DataService.Rest.Attribute;
+	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
 
 	#endregion
 
@@ -24,53 +24,53 @@ namespace PiWeb.Api.Training.Lessons
 	{
 		#region members
 
-		private static readonly AbstractAttributeDefinition MachineName = new AttributeDefinition
+		private static readonly AbstractAttributeDefinitionDto MachineName = new AttributeDefinitionDto
 		{
 			Key = 14001,
 			Description = "Machine name",
-			Type = AttributeType.AlphaNumeric,
+			Type = AttributeTypeDto.AlphaNumeric,
 			Length = 255
 		};
 
-		private static readonly AbstractAttributeDefinition MachineNumber = new AttributeDefinition
+		private static readonly AbstractAttributeDefinitionDto MachineNumber = new AttributeDefinitionDto
 		{
 			Key = 14002,
 			Description = "Machine number",
-			Type = AttributeType.Integer
+			Type = AttributeTypeDto.Integer
 		};
 
-		private static readonly AbstractAttributeDefinition MachineVendor = new AttributeDefinition
+		private static readonly AbstractAttributeDefinitionDto MachineVendor = new AttributeDefinitionDto
 		{
 			Key = 14003,
 			Description = "Machine vendor",
-			Type = AttributeType.AlphaNumeric,
+			Type = AttributeTypeDto.AlphaNumeric,
 			Length = 255
 		};
 
-		private static readonly CatalogEntry EntryAccura = new CatalogEntry
+		private static readonly CatalogEntryDto EntryAccura = new CatalogEntryDto
 		{
 			Key = 1,
-			Attributes = new[] { new Attribute( MachineName.Key, "Accura" ), new Attribute( MachineNumber.Key, 1 ) }
+			Attributes = new[] { new AttributeDto( MachineName.Key, "Accura" ), new AttributeDto( MachineNumber.Key, 1 ) }
 		};
 
-		private static readonly CatalogEntry EntryContura = new CatalogEntry
+		private static readonly CatalogEntryDto EntryContura = new CatalogEntryDto
 		{
 			Key = 2,
-			Attributes = new[] { new Attribute( MachineName.Key, "Contura" ), new Attribute( MachineNumber.Key, 2 ) }
+			Attributes = new[] { new AttributeDto( MachineName.Key, "Contura" ), new AttributeDto( MachineNumber.Key, 2 ) }
 		};
 
-		private static readonly CatalogEntry EntryXenos = new CatalogEntry
+		private static readonly CatalogEntryDto EntryXenos = new CatalogEntryDto
 		{
 			Key = 3,
 			Attributes =
 				new[]
 				{
-					new Attribute( MachineName.Key, "Xenos" ), new Attribute( MachineNumber.Key, 3 ),
-					new Attribute( MachineVendor.Key, "Zeiss" )
+					new AttributeDto( MachineName.Key, "Xenos" ), new AttributeDto( MachineNumber.Key, 3 ),
+					new AttributeDto( MachineVendor.Key, "Zeiss" )
 				}
 		};
 
-		private static readonly Catalog MachineCatalog = new Catalog
+		private static readonly CatalogDto MachineCatalog = new CatalogDto
 		{
 			ValidAttributes = new[] { MachineName.Key, MachineNumber.Key },
 			Name = "Machine catalog",
@@ -90,7 +90,7 @@ namespace PiWeb.Api.Training.Lessons
 		{
 			//A catalog must have at least one attribute.
 			//Attributes with entity 'Catalog' must not be of type 'CatalogAttribute'
-			await client.CreateAttributeDefinitions( Entity.Catalog, new[] { MachineName, MachineNumber, MachineVendor } );
+			await client.CreateAttributeDefinitions( EntityDto.Catalog, new[] { MachineName, MachineNumber, MachineVendor } );
 
 			//Create the catalog
 			await client.CreateCatalogs( new[] { MachineCatalog } );
@@ -104,8 +104,8 @@ namespace PiWeb.Api.Training.Lessons
 			await client.CreateCatalogEntries( MachineCatalog.Uuid, new[] { EntryXenos } );
 
 			//Update existing catalog entries
-			EntryAccura.Attributes = EntryAccura.Attributes.Append( new Attribute( MachineVendor.Key, "Zeiss" ) );
-			EntryContura.Attributes = EntryContura.Attributes.Append( new Attribute( MachineVendor.Key, "Zeiss" ) );
+			EntryAccura.Attributes = EntryAccura.Attributes.Append( new AttributeDto( MachineVendor.Key, "Zeiss" ) );
+			EntryContura.Attributes = EntryContura.Attributes.Append( new AttributeDto( MachineVendor.Key, "Zeiss" ) );
 
 			await client.UpdateCatalogs( new[] { MachineCatalog } );
 		}
@@ -114,8 +114,7 @@ namespace PiWeb.Api.Training.Lessons
 		{
 			//Delete the catalogs first, since deleting attributes which are used by catalogs will cause an error
 			await client.DeleteCatalogs( new[] { MachineCatalog.Uuid } );
-			await
-				client.DeleteAttributeDefinitions( Entity.Catalog, new[] { MachineName.Key, MachineNumber.Key, MachineVendor.Key } );
+			await client.DeleteAttributeDefinitions( EntityDto.Catalog, new[] { MachineName.Key, MachineNumber.Key, MachineVendor.Key } );
 		}
 
 		#endregion

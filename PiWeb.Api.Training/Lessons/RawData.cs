@@ -16,15 +16,21 @@ namespace PiWeb.Api.Training.Lessons
 	using System.Security.Cryptography;
 	using System.Text;
 	using System.Threading.Tasks;
-	using Zeiss.IMT.PiWeb.Api.Common.Data;
-	using Zeiss.IMT.PiWeb.Api.DataService.Rest;
-	using Zeiss.IMT.PiWeb.Api.RawDataService.Rest;
+	using Zeiss.PiWeb.Api.Rest.Dtos;
+	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
+	using Zeiss.PiWeb.Api.Rest.Dtos.RawData;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
+	using Zeiss.PiWeb.Api.Rest.HttpClient.RawData;
 
 	#endregion
 
 	public static class RawData
 	{
-		private static readonly InspectionPlanPart Part = new InspectionPlanPart { Path = PathHelper.String2PartPathInformation( "/RawDataTarget" ), Uuid = Guid.NewGuid() };
+		#region members
+
+		private static readonly InspectionPlanPartDto Part = new InspectionPlanPartDto { Path = PathHelper.RoundtripString2PathInformation( "P:/RawDataTarget/" ), Uuid = Guid.NewGuid() };
+
+		#endregion
 
 		#region methods
 
@@ -34,12 +40,12 @@ namespace PiWeb.Api.Training.Lessons
 
 			//PiWeb only accepts binary data
 			var data = Encoding.UTF8.GetBytes( "Hello RawDataService!" );
-			var target = RawDataTargetEntity.CreateForPart( Part.Uuid );
+			var target = RawDataTargetEntityDto.CreateForPart( Part.Uuid );
 
 			//Notes:	- see e.g. http://wiki.selfhtml.org/wiki/Referenz:MIME-Typen for a complete list of mime types
 			//			- When using Key = -1, the server will generate a new key
 
-			await rawClient.CreateRawData( new RawDataInformation
+			await rawClient.CreateRawData( new RawDataInformationDto
 			{
 				FileName = "Hello.txt",
 				MimeType = "text/plain",
@@ -55,7 +61,7 @@ namespace PiWeb.Api.Training.Lessons
 
 			foreach( var information in rawDataInformation )
 			{
-				Console.WriteLine( $"Fetchin {information.FileName}: {information.Size} bytes" );
+				Console.WriteLine( $"Fetching {information.FileName}: {information.Size} bytes" );
 
 				//Fetch the data by providing the correct RawDataInformation
 				data = await rawClient.GetRawData( information );
@@ -65,7 +71,7 @@ namespace PiWeb.Api.Training.Lessons
 				//We can use the key we found with the ListRawData function to delete a single file
 				await rawClient.DeleteRawDataForPart( Part.Uuid, information.Key );
 			}
-			
+
 			//Or we simply delete all raw data for a certain entity
 			await rawClient.DeleteRawDataForPart( Part.Uuid );
 		}
@@ -74,8 +80,7 @@ namespace PiWeb.Api.Training.Lessons
 		{
 			await client.DeleteParts( new[] { Part.Uuid } );
 		}
+
 		#endregion
 	}
-
-
 }
