@@ -43,9 +43,9 @@ namespace PiWeb.Api.Training.Lessons
 			var target = RawDataTargetEntityDto.CreateForPart( Part.Uuid );
 
 			//Notes:	- see e.g. http://wiki.selfhtml.org/wiki/Referenz:MIME-Typen for a complete list of mime types
-			//			- When using Key = -1, the server will generate a new key
+			//			- When using Key = -1, the server will generate a new key. The generated key can be read from the result.
 
-			await rawClient.CreateRawData( new RawDataInformationDto
+			var createdRawDataInfo = await rawClient.CreateRawData( new RawDataInformationDto
 			{
 				FileName = "Hello.txt",
 				MimeType = "text/plain",
@@ -56,6 +56,18 @@ namespace PiWeb.Api.Training.Lessons
 				Size = data.Length,
 				Target = target
 			}, data );
+			
+			Console.WriteLine( $"RawData created with key: {createdRawDataInfo.Key}" );
+
+			//We can simply update raw data information like filename or MIME-type
+			if ( createdRawDataInfo.Key.HasValue )
+			{
+				createdRawDataInfo.FileName = "HelloEdit.txt";
+				
+				Console.WriteLine( $"Renaming raw data file to {createdRawDataInfo.FileName}" );
+				
+				await rawClient.UpdateRawDataInformation( target, createdRawDataInfo.Key.Value, createdRawDataInfo );
+			}
 
 			var rawDataInformation = await rawClient.ListRawData( new[] { target } );
 
