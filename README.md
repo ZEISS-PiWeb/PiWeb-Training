@@ -7,7 +7,7 @@ Samples and lessons for our APIs
 A training application including the most common use cases to read and write data with our .NET SDK from and to the database.
 
 All aspects of our .NET SDK [Zeiss.PiWeb.Api.Rest](https://www.nuget.org/packages/Zeiss.PiWeb.Api.Rest/) with examples structured in different lessons.
-A comprehensive documentation can be found on [here](http://zeiss-piweb.github.io/PiWeb-Api/sdk/v6.0/).
+A comprehensive documentation can be found on [here](http://zeiss-piweb.github.io/PiWeb-Api/sdk/v7.2/).
 
 #### Lessons:
 - ServiceInformation: Get information about your PiWeb Server
