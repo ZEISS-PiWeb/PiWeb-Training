@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1293.44" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Zeiss.PiWeb.Api.Rest" Version="7.2.1" />
+    <PackageReference Include="Zeiss.PiWeb.Api.Rest" Version="8.1.0" />
   </ItemGroup>
 
 </Project>

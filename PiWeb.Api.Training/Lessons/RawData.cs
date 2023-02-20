@@ -16,11 +16,11 @@ namespace PiWeb.Api.Training.Lessons
 	using System.Security.Cryptography;
 	using System.Text;
 	using System.Threading.Tasks;
-	using Zeiss.PiWeb.Api.Rest.Dtos;
 	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
 	using Zeiss.PiWeb.Api.Rest.Dtos.RawData;
 	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
 	using Zeiss.PiWeb.Api.Rest.HttpClient.RawData;
+	using Zeiss.PiWeb.Api.Core;
 
 	#endregion
 

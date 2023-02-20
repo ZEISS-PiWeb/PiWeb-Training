@@ -17,6 +17,7 @@ namespace PiWeb.Api.Training.Example
 	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
 	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
 	using AttributeList = System.Collections.Generic.Dictionary<string, object>;
+	using Attribute = Zeiss.PiWeb.Api.Core.Attribute;
 
 	public static class ExampleExport
 	{
@@ -105,22 +106,19 @@ namespace PiWeb.Api.Training.Example
 			}
 
 			//4. Create the measurement
-			var dataCharacteristics = characteristicMapping.Select( pair => new DataCharacteristicDto
-			{
-				Uuid = pair.Value.Uuid,
-				Path = pair.Value.Path,
-				Value = new DataValueDto
+			var dataCharacteristics = characteristicMapping.ToDictionary(
+				pair => pair.Value.Uuid,
+				pair => new DataValueDto
 				{
-					Attributes = new[] { new AttributeDto( 1, pair.Key.Value ) }
-				}
-			} ).ToArray();
+					Attributes = new[] { new Attribute( 1, pair.Key.Value ) }
+				});
 
 			var measurement = new DataMeasurementDto
 			{
 				Uuid = Guid.NewGuid(),
 				PartUuid = part.Uuid,
 				Time = DateTime.UtcNow,
-				Attributes = new[] { new AttributeDto( WellKnownKeys.Measurement.Time, DateTime.UtcNow ) },
+				Attributes = new[] { new Attribute( WellKnownKeys.Measurement.Time, DateTime.UtcNow ) },
 				Characteristics = dataCharacteristics
 			};
 

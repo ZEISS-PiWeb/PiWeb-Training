@@ -13,9 +13,10 @@ namespace PiWeb.Api.Training.Example
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using Zeiss.PiWeb.Api.Rest.Dtos;
 	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
 	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
+	using Zeiss.PiWeb.Api.Core;
+	using Attribute = Zeiss.PiWeb.Api.Core.Attribute;
 
 	public static class InspectionPlan
 	{
@@ -23,7 +24,7 @@ namespace PiWeb.Api.Training.Example
 
 		public static InspectionPlanPartDto GetOrCreatePart( DataServiceRestClient client, string name )
 		{
-			var parts = client.GetParts( PathInformationDto.Root, null, 1 ).Result;
+			var parts = client.GetParts( PathInformation.Root, null, 1 ).Result;
 			var existingPart = parts.FirstOrDefault( p => string.Equals( p.Path.Name, name ) );
 			if( existingPart == null )
 			{
@@ -45,7 +46,7 @@ namespace PiWeb.Api.Training.Example
 		public static InspectionPlanCharacteristicDto GetOrCreateCharacteristic( DataServiceRestClient client, string partName, string characteristicName, Dictionary<string, ushort> mapping, Dictionary<string, object> values )
 		{
 			var characteristics = client.GetCharacteristics( PathHelper.String2PartPathInformation( partName ), 1 ).Result;
-			var attributes = values.Select( pair => new AttributeDto( mapping[ pair.Key ], pair.Value ) ).ToArray();
+			var attributes = values.Select( pair => new Attribute( mapping[ pair.Key ], pair.Value ) ).ToArray();
 
 			var existingCharacteristic = characteristics.FirstOrDefault( p => string.Equals( p.Path.Name, characteristicName ) );
 			if( existingCharacteristic == null )

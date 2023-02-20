@@ -13,10 +13,11 @@ namespace PiWeb.Api.Training.Lessons
 	#region usings
 
 	using System;
+	using System.Linq;
 	using System.Threading.Tasks;
-	using PiWeb.Api.Training.Helpers;
 	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
 	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
+	using Attribute = Zeiss.PiWeb.Api.Core.Attribute;
 
 	#endregion
 
@@ -50,13 +51,13 @@ namespace PiWeb.Api.Training.Lessons
 		private static readonly CatalogEntryDto EntryAccura = new CatalogEntryDto
 		{
 			Key = 1,
-			Attributes = new[] { new AttributeDto( MachineName.Key, "Accura" ), new AttributeDto( MachineNumber.Key, 1 ) }
+			Attributes = new[] { new Attribute( MachineName.Key, "Accura" ), new Attribute( MachineNumber.Key, 1 ) }
 		};
 
 		private static readonly CatalogEntryDto EntryContura = new CatalogEntryDto
 		{
 			Key = 2,
-			Attributes = new[] { new AttributeDto( MachineName.Key, "Contura" ), new AttributeDto( MachineNumber.Key, 2 ) }
+			Attributes = new[] { new Attribute( MachineName.Key, "Contura" ), new Attribute( MachineNumber.Key, 2 ) }
 		};
 
 		private static readonly CatalogEntryDto EntryXenos = new CatalogEntryDto
@@ -65,8 +66,8 @@ namespace PiWeb.Api.Training.Lessons
 			Attributes =
 				new[]
 				{
-					new AttributeDto( MachineName.Key, "Xenos" ), new AttributeDto( MachineNumber.Key, 3 ),
-					new AttributeDto( MachineVendor.Key, "Zeiss" )
+					new Attribute( MachineName.Key, "Xenos" ), new Attribute( MachineNumber.Key, 3 ),
+					new Attribute( MachineVendor.Key, "Zeiss" )
 				}
 		};
 
@@ -96,7 +97,7 @@ namespace PiWeb.Api.Training.Lessons
 			await client.CreateCatalogs( new[] { MachineCatalog } );
 
 			//Add an attribute
-			MachineCatalog.ValidAttributes = MachineCatalog.ValidAttributes.Append( MachineVendor.Key );
+			MachineCatalog.ValidAttributes = MachineCatalog.ValidAttributes.Append( MachineVendor.Key ).ToList();
 
 			await client.UpdateCatalogs( new[] { MachineCatalog } );
 
@@ -104,8 +105,8 @@ namespace PiWeb.Api.Training.Lessons
 			await client.CreateCatalogEntries( MachineCatalog.Uuid, new[] { EntryXenos } );
 
 			//Update existing catalog entries
-			EntryAccura.Attributes = EntryAccura.Attributes.Append( new AttributeDto( MachineVendor.Key, "Zeiss" ) );
-			EntryContura.Attributes = EntryContura.Attributes.Append( new AttributeDto( MachineVendor.Key, "Zeiss" ) );
+			EntryAccura.Attributes = EntryAccura.Attributes.Append( new Attribute( MachineVendor.Key, "Zeiss" ) ).ToList();
+			EntryContura.Attributes = EntryContura.Attributes.Append( new Attribute( MachineVendor.Key, "Zeiss" ) ).ToList();
 
 			await client.UpdateCatalogs( new[] { MachineCatalog } );
 		}

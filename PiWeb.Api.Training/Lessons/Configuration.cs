@@ -16,6 +16,7 @@ namespace PiWeb.Api.Training.Lessons
 	using System.Threading.Tasks;
 	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
 	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
+	using Attribute = Zeiss.PiWeb.Api.Core.Attribute;
 
 	#endregion
 
@@ -36,7 +37,7 @@ namespace PiWeb.Api.Training.Lessons
 				new CatalogEntryDto
 				{
 					Key = 1,
-					Attributes = new[] { new AttributeDto( CatalogColumnAttributeDefinition.Key, "Value" ) }
+					Attributes = new[] { new Attribute( CatalogColumnAttributeDefinition.Key, "Value" ) }
 				}
 			}
 		};
@@ -82,11 +83,11 @@ namespace PiWeb.Api.Training.Lessons
 			var configuration = await client.GetConfiguration();
 
 			//Attributes are assigned to an entity: part, characteristic, measurement, value or catalog.
-			Console.WriteLine( $"Attributes for part: {configuration.PartAttributes.Length}" );
-			Console.WriteLine( $"Attributes for characteristic: {configuration.CharacteristicAttributes.Length}" );
-			Console.WriteLine( $"Attributes for measurement: {configuration.MeasurementAttributes.Length}" );
-			Console.WriteLine( $"Attributes for value: {configuration.ValueAttributes.Length}" );
-			Console.WriteLine( $"Attributes for catalog: {configuration.CatalogAttributes.Length}" );
+			Console.WriteLine( $"Attributes for part: {configuration.PartAttributes.Count}" );
+			Console.WriteLine( $"Attributes for characteristic: {configuration.CharacteristicAttributes.Count}" );
+			Console.WriteLine( $"Attributes for measurement: {configuration.MeasurementAttributes.Count}" );
+			Console.WriteLine( $"Attributes for value: {configuration.ValueAttributes.Count}" );
+			Console.WriteLine( $"Attributes for catalog: {configuration.CatalogAttributes.Count}" );
 		}
 
 		public static async Task UndoLesson( DataServiceRestClient client )

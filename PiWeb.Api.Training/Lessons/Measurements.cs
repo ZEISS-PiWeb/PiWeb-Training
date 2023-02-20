@@ -13,12 +13,14 @@ namespace PiWeb.Api.Training.Lessons
 	#region usings
 
 	using System;
+	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Xml;
 	using Zeiss.PiWeb.Api.Definitions;
-	using Zeiss.PiWeb.Api.Rest.Dtos;
 	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
 	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
+	using Zeiss.PiWeb.Api.Core;
+	using Attribute = Zeiss.PiWeb.Api.Core.Attribute;
 
 	#endregion
 
@@ -30,12 +32,9 @@ namespace PiWeb.Api.Training.Lessons
 		private static readonly InspectionPlanPartDto Part = new InspectionPlanPartDto { Path = PathHelper.RoundtripString2PathInformation( "P:/Measured part/" ), Uuid = Guid.NewGuid() };
 		private static readonly InspectionPlanCharacteristicDto Characteristic = new InspectionPlanCharacteristicDto { Path = PathHelper.RoundtripString2PathInformation( "PC:/Measured part/Measured characteristic/" ), Uuid = Guid.NewGuid() };
 
-		private static readonly DataCharacteristicDto Value = new DataCharacteristicDto
+		private static readonly Dictionary<Guid, DataValueDto> Values = new()
 		{
-			//Always specify both, path and uuid of the characteristic. All other properties are obsolete
-			Path = Characteristic.Path,
-			Uuid = Characteristic.Uuid,
-			Value = new DataValueDto( 0.0 )
+			{ Characteristic.Uuid, new DataValueDto(0.0) }
 		};
 
 		private static readonly DataMeasurementDto Measurement = new DataMeasurementDto
@@ -44,12 +43,9 @@ namespace PiWeb.Api.Training.Lessons
 			PartUuid = Part.Uuid,
 			Attributes = new[]
 				{
-					new AttributeDto( MeasurementAttributeDefinition.Key, DateTime.Now )
+					new Attribute( MeasurementAttributeDefinition.Key, DateTime.Now )
 				},
-			Characteristics = new[]
-				{
-					Value
-				}
+			Characteristics = Values
 		};
 
 		#region methods
@@ -73,22 +69,20 @@ namespace PiWeb.Api.Training.Lessons
 			//The function 'CreateMeasurements' will create measurements without any values. You'll much more likely use the 'CreateMeasurementValues' function
 			await client.CreateMeasurementValues( new[] { Measurement } );
 
-			Value.Value = new DataValueDto( 0.0 ) //This will result in an unmeasured characteristic, because the attribute array doesn't contain K1
+			Values[Characteristic.Uuid] = new DataValueDto( 0.0 ) //This will result in an unmeasured characteristic, because the attribute array doesn't contain K1 (overridden by empty attribute array!)
 			{
-				Attributes = new AttributeDto[] { }
+				Attributes = new Attribute[] { } //Either remove this when using the the DataValueDto constructor with value, or see next example
 			};
 
-			await client.UpdateMeasurementValues( new[] { Measurement } );
-
-			Value.Value = new DataValueDto //this will work!
+			Values[Characteristic.Uuid] = new DataValueDto //this will work!
 			{
-				Attributes = new[] { new AttributeDto( ValueAttributeDefinition.Key, 0.5 ) }
+				Attributes = new[] { new Attribute( ValueAttributeDefinition.Key, 0.5 ) }
 			};
 
 			await client.UpdateMeasurementValues( new[] { Measurement } );
 
 			var result = await client.GetMeasurementValues(
-				PathInformationDto.Root,                                           // Part where to search measurements 
+				PathInformation.Root,                                              // Part where to search measurements 
 				new MeasurementValueFilterAttributesDto
 				{
 					AggregationMeasurements = AggregationMeasurementSelectionDto.All, // Decide how to include aggregated measurements in your query

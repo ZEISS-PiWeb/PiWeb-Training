@@ -15,9 +15,9 @@ namespace PiWeb.Api.Training.Lessons
 	using System;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using Zeiss.PiWeb.Api.Rest.Dtos;
 	using Zeiss.PiWeb.Api.Rest.Dtos.Data;
 	using Zeiss.PiWeb.Api.Rest.HttpClient.Data;
+	using Zeiss.PiWeb.Api.Core;
 
 	#endregion
 

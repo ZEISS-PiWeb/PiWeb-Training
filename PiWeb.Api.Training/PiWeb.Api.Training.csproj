@@ -8,6 +8,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Zeiss.PiWeb.Api.Rest" Version="7.2.1" />
+    <PackageReference Include="Zeiss.PiWeb.Api.Rest" Version="8.1.0" />
   </ItemGroup>
 </Project>
