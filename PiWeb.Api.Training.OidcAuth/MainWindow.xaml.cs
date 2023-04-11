@@ -20,7 +20,10 @@ namespace PiWeb.Api.Training.OidcAuth
 		private async void ConnectButton_Click(object sender, RoutedEventArgs e)
 		{
 			// get the database id from the text box
-			bool isDatabaseIdValid = Guid.TryParse(DatabaseId.Text, out var databaseGuid);
+			// this id represents a database within a PiWeb cloud subscription
+			// the id is part of the URL when you open the database in the piweb cloud portal website, for example:
+			// https://piwebcloud.metrology.zeiss.com/subscriptions/manage/<subscriptionId>/instances/<databaseId>
+			var isDatabaseIdValid = Guid.TryParse(DatabaseId.Text, out var databaseGuid);
 			if (!isDatabaseIdValid)
 			{
 				Output.Text = "invalid database id - please input the database id using the database url in PiWeb cloud portal";
