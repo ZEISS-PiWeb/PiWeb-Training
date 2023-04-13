@@ -41,10 +41,37 @@ namespace PiWeb.Api.Training.OidcAuth
 				WebView.Source = new Uri(OAuthRequest.StartUrl);
 		}
 
-		private async void WebViewOnNavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+		private void WebViewOnNavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
 		{
 			if (OAuthRequest == null)
 				return;
+
+			if( OAuthResponse != null )
+			{
+				// close embedded browser successfully
+				DialogResult = true;
+				Close();
+			}
+			else if( e.WebErrorStatus != CoreWebView2WebErrorStatus.ConnectionAborted &&
+			         e.WebErrorStatus != CoreWebView2WebErrorStatus.OperationCanceled &&
+			         ( e.IsSuccess == false || e.HttpStatusCode >= 400 ) )
+			{
+				Console.Error.WriteLine( $"WebView2: Server responded with error status: {e.WebErrorStatus}, HTTP status code: {e.HttpStatusCode}. Check server configuration!" );
+				// do something with the error
+			}
+		}
+		
+		private async void WebViewOnNavigationStarting( object sender, CoreWebView2NavigationStartingEventArgs e )
+		{
+			if( OAuthRequest == null )
+				return;
+
+			var navigationTargetUrl = e.Uri;
+			if( string.IsNullOrEmpty( navigationTargetUrl ) )
+				return;
+
+			if( navigationTargetUrl.StartsWith( OAuthRequest.CallbackUrl, StringComparison.Ordinal ) )
+				e.Cancel = true;
 
 			// monitor the embedded browser until a form is displayed trying to post a response
 			// to the callback url
@@ -56,10 +83,6 @@ namespace PiWeb.Api.Training.OidcAuth
 
 			// create the OAuthResponse using the URL from above
 			OAuthResponse = new OAuthResponse(response);
-
-			// close embedded browser successfully
-			DialogResult = true;
-			Close();
 		}
 	}
 }

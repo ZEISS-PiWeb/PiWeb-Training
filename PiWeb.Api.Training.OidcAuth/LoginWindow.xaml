@@ -9,6 +9,7 @@
         DataContextChanged="OnDataContextChanged">
     <Grid>
         <wv2:WebView2 x:Name="WebView"
+                      NavigationStarting="WebViewOnNavigationStarting"
                       NavigationCompleted="WebViewOnNavigationCompleted"/>
     </Grid>
 </Window>
