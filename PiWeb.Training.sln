@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Pr
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PiWeb.Api.Training.Events", "PiWeb.Api.Training.Events\PiWeb.Api.Training.Events.csproj", "{47DE4847-582D-44CB-85A0-66AC89ABB11A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{30A718D5-9F1B-4E54-BF76-D1EA795EC614}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30A718D5-9F1B-4E54-BF76-D1EA795EC614}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30A718D5-9F1B-4E54-BF76-D1EA795EC614}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47DE4847-582D-44CB-85A0-66AC89ABB11A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47DE4847-582D-44CB-85A0-66AC89ABB11A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47DE4847-582D-44CB-85A0-66AC89ABB11A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47DE4847-582D-44CB-85A0-66AC89ABB11A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

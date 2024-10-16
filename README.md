@@ -52,3 +52,20 @@ The training application uses [WebView2](https://www.nuget.org/packages/Microsof
 Please note that in order for this to work you might need to install the
 [WebView2 Runtime](https://docs.microsoft.com/de-de/microsoft-edge/webview2/concepts/distribution).
 
+## PiWeb.API - Events
+
+A training application showing how to subscribe to PiWeb Server events sent for changes done via [DataServiceRest](https://zeiss-piweb.github.io/PiWeb-Api/dataservice/v1.11/#ds-events) or [RawDataServiceRest](https://zeiss-piweb.github.io/PiWeb-Api/rawdataservice/v1.8/#rs-events), using the [SignalR](https://learn.microsoft.com/en-us/aspnet/core/signalr/introduction?view=aspnetcore-8.0) C# client.
+
+The training application will guide you through the process of subscribing to different events and allows you to get a more in-depth look on how it works using C#.
+The application is a simple console application, writing out received events. It supports most of the authentication methods of PiWeb Server.
+
+### Getting started
+
+- open the training project in the IDE of your choice
+- build and run the project PiWeb.Api.Training.Events
+- enter the URL of your PiWeb Server, including port and if applicable the instance name
+- choose the authentication method you want to use and provide the login data
+
+After a successful connection is established, the console will print information about received events.
+
+Try it out! Create a part using PiWeb Planner or the API, and the training application will inform you about this.
