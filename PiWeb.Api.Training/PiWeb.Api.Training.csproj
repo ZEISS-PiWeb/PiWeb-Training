@@ -1,13 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Zeiss.PiWeb.Api.Rest" Version="8.1.0" />
+    <PackageReference Include="Zeiss.PiWeb.Api.Rest" Version="9.0.0" />
   </ItemGroup>
 </Project>
