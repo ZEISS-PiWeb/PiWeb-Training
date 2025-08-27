@@ -60,6 +60,8 @@ public static class Program
     private static bool TryGetServerUrl([NotNullWhen(true)] out Uri? serverUrl)
     {
         var serverUrlString = ConsoleUI.InputText("Server URL with port");
+        if (!serverUrlString.EndsWith('/'))
+            serverUrlString = $"{serverUrlString}/";
 
         try
         {
@@ -81,7 +83,7 @@ public static class Program
         {
             // Use the SignalR client to connect while specifying the chosen authentication mode
             connection = new HubConnectionBuilder()
-                .WithUrl(new Uri(serverUrl, "/events"), options => Authentication.SetConnectionOptions(authenticationMode, options))
+                .WithUrl(new Uri(serverUrl, "events"), options => Authentication.SetConnectionOptions(authenticationMode, options))
                 .Build();
             return true;
         }
