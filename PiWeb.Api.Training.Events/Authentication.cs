@@ -49,7 +49,7 @@ public static class Authentication
             case AuthenticationMode.Certificate:
                 SetConnectionOptionsForCertificate(options);
                 break;
-            case AuthenticationMode.OpenID:
+            case AuthenticationMode.OpenIDConnect:
                 throw new ArgumentOutOfRangeException(nameof(mode),
                     "Authentication mode is not supported by this client implementation.");
             default:
@@ -94,7 +94,7 @@ public static class Authentication
         try
         {
             using var httpClient = new HttpClient();
-            var jsonResult = await httpClient.GetStringAsync(new Uri(serverUrl, "/.well-known/ServerConfiguration"));
+            var jsonResult = await httpClient.GetStringAsync(new Uri(serverUrl, ".well-known/ServerConfiguration"));
 
             var jsonSerializerOptions = new JsonSerializerOptions();
             jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -123,7 +123,7 @@ public static class Authentication
         Basic,
         Windows,
         Certificate,
-        OpenID
+        OpenIDConnect
     }
 
     /// <summary>
