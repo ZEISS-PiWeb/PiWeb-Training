@@ -19,37 +19,17 @@ A comprehensive documentation can be found on [here](http://zeiss-piweb.github.i
 
 ## PiWeb.API - OIDC Authentication
 
-### OIDC Client Configuration
-PiWeb uses the Hybrid Flow with PKCE (proof key for code exchange).
-
-We recommend using the following OIDC client configuration for authentication:
-
-**Authorize request:**
-
-| Property       | Value                                             |
-|----------------|---------------------------------------------------|
-| client_id      | f1ddf74a-7ed1-4963-ab60-a1138a089791              |
-| response_type  | id_token code                                     |
-| redirect_uri   | urn:ietf:wg:oauth:2.0:oob                         |
-| response_mode  | form_post                                         |
-| scope          | openid%20profile%20email%20offline_access%20piweb |
-
-**Token exchange request:**
-
-| Property     | Value                                              |
-|--------------|----------------------------------------------------|
-| client_id    | f1ddf74a-7ed1-4963-ab60-a1138a089791               |
-| redirect_uri | urn:ietf:wg:oauth:2.0:oob                          |
-| grant_type   | authorization_code                                 |
+### Client Configuration
+If PiWeb Server is secured by OpenID Connect authentication you have to obtain an access token and pass it in the HTTP authorization header. The access token can be obtained from an OpenID identity provider. For doing this manually, 
+please refer to the [security section](https://zeiss-piweb.github.io/PiWeb-Api/general#gi-security) of the API documentation to find out PiWeb specific settings and a short summary of necessary steps, and the official [OpenID Connect specification](https://openid.net/specs/openid-connect-core-1_0.html) for detailed information.
 
 ### Training application 
 
-A training application showing how to authenticate a request when PiWeb server is using OpenID connect authentication.
-PiWeb cloud is a PiWeb server using OpenID connect authentication. The procedure for using OpenID connect authentication
-is the same for PiWeb server and PiWeb cloud.
+A training application showing how to authenticate a request when PiWeb Server is using OpenID Connect authentication.
+The procedure for using OpenID Connect authentication is the same for PiWeb Server and PiWeb Cloud. PiWeb Cloud is accepting OpenID Connect as the only way of authentication. 
 
-The training application uses [WebView2](https://www.nuget.org/packages/Microsoft.Web.WebView2/) as embedded browser. 
-Please note that in order for this to work you might need to install the
+The training application is utilizing OpenID Connect helper features of our [.NET API SDK](https://www.nuget.org/packages/Zeiss.PiWeb.Api.Rest/) to deal with PiWeb specifics, as well as the authentication process. The application also uses [WebView2](https://www.nuget.org/packages/Microsoft.Web.WebView2/) as embedded browser. 
+Please note, in order to make it work you might need to install the
 [WebView2 Runtime](https://docs.microsoft.com/de-de/microsoft-edge/webview2/concepts/distribution).
 
 ## PiWeb.API - Events
